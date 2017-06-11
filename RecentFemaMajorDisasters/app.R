@@ -99,7 +99,9 @@ ui <- fluidPage(
                      "Past Number of Days:",
                      min = 1,
                      max = 365,
-                     value = 180)
+                     value = 180),
+        textInput("txtaddress",
+                  "Enter Manual Address Search:","")
       ),
       
       # Show a plot of the generated distribution
@@ -136,6 +138,11 @@ server <- function(input, output) {
    output$femaTable <- renderTable({
 
       mapdata<-sqldf(paste0("select * from dddf where DaysSinceDeclaration <= ",input$bins, collapse = ''))
+      if(nchar(input$txtaddress)>4){
+        txtcountyfips<-"1101" # holder for addition of feature derivecountyfips(input$txtaddress)
+        mapdata<-mapdata[mapdata$FIPSCounty==txtcountyfips,]
+      }
+      
       mapdata
    })
 }
