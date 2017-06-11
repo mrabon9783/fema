@@ -104,7 +104,8 @@ ui <- fluidPage(
       
       # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("femaPlot")
+         plotOutput("femaPlot"),
+         tableOutput("femaTable")
       )
    )
 )
@@ -130,6 +131,12 @@ server <- function(input, output) {
       p1<- p1 + geom_polygon(data = cntydf, aes(x=long, y=lat, fill = factor(clr),group = group), alpha = .85)
       p1<- p1 + scale_fill_manual(values = c("#990000", "#d7301f", "#ef6548", "#fc8d59", "#fdbb84", "#fdd49e", "#fff7ec"),name = "Days Since Presidential \nMajor Disaster Declaration",labels = c("<15 Days Past","15-30 Days Past","30-45 Days Past","45-60 Days Past","60-90 Days Past","90-180 Days Past","180+ Days Past") )
       p1
+   })
+  
+   output$femaTable <- renderTable({
+
+      mapdata<-sqldf(paste0("select * from dddf where DaysSinceDeclaration <= ",input$bins, collapse = ''))
+      mapdata
    })
 }
 
